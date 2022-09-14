@@ -56,12 +56,12 @@ export default {
   },
 
   proxy: {
-    '/issuer-api/': 'https://wallet.waltid.org',
-    '/onboarding-api/': 'https://wallet.waltid.org',
-    '/api/': 'https://wallet.waltid.org'
-    //'/issuer-api/': 'http://localhost:8080/',
-    //'/onboarding-api/': 'http://localhost:8080/',
-    //'/api/': 'http://localhost:8080/'
+    // '/issuer-api/': 'https://wallet.waltid.org',
+    // '/onboarding-api/': 'https://wallet.waltid.org',
+    // '/api/': 'https://wallet.waltid.org'
+    '/issuer-api/': 'http://localhost:8080/',
+    '/onboarding-api/': 'http://localhost:8080/',
+    '/api/': 'http://localhost:8080/'
   },
 
   auth: {
@@ -74,11 +74,11 @@ export default {
           type: "Bearer"
         },
         user: false,
-        endpoints: {
-          login: { url: "api/auth/login", method: "post" },
-          user: { url: "api/auth/userInfo", method: "get" },
-          logout: false
-        }
+        // endpoints: {
+        //   login: { url: "api/auth/login", method: "post" },
+        //   user: { url: "api/auth/userInfo", method: "get" },
+        //   logout: false
+        // }
       },
       localOnboarding: {
         scheme: 'local',
@@ -96,11 +96,11 @@ export default {
         }
       }
     },
-    redirect: {
-      login: '/login',
-      logout: '/logout',
-      home: '/Credentials'
-    },
+    // redirect: {
+    //   login: '/login',
+    //   logout: '/logout',
+    //   home: '/Credentials'
+    // },
     cookie: false
   },
 
