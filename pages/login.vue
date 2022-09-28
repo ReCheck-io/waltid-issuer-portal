@@ -108,7 +108,9 @@ export default {
     },
     async login() {
       console.log("coming here ? ", this.issuer);
-      this.$router.push('/Issuer');
+      if(this.issuer){
+        this.$router.push('/Issuer');
+      }
       try {
         const loginResponse = await this.$auth.loginWith("local", {
           data: {
@@ -117,14 +119,8 @@ export default {
           },
         });
         console.log(loginResponse);
-        this.$auth.setUser(loginResponse.data);
-        // console.log("This issuer ", issuer);
-        // if(issuer){
-        // this.$router.push("/issuer")
-        // } else{
-        
+        this.$auth.setUser(loginResponse.data);        
         console.log(this.$router.push('/Issuer'));
-        // }
       } catch (e) {
         this.error = e.response.data.message;
       }
