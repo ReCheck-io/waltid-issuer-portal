@@ -128,6 +128,47 @@
                   <label class="form-check-label"
                     >Verifiable ID for {{ $t(issuable.id) }} with issuance id: {{ issuable.issuanceID }} </label
                   >
+                  <button
+                    type="button"
+                    data-bs-toggle="modal"
+                    :data-bs-target="'#credentilModalVerifiableIdRead'"
+                    class="text-primary _view-btn mb-2"
+                  >
+                    <i class="bi bi-box-arrow-up-right p-1"></i>
+                  </button>
+                  <!--Credendtial Modal -->
+                  <div
+                    class="modal fade"
+                    :id="'credentilModalVerifiableIdRead'"
+                    tabindex="-1"
+                    :aria-labelledby="'credentilModalVerifiableIdRead'"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">
+                            {{ "Credentail Data" }}
+                          </h5>
+                        </div>
+                        <VerifiableIDRead
+                          :issuable="JSON.parse(issuable.vc)"
+                          :enableEditor="enableCredentialEditor"
+                          class="modal-body"
+                        />
+                        <div class="modal-footer">
+                          <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-dismiss="modal"
+                            @click="reset"
+                          >
+                            {{ $t("CLOSE") }}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <p>This {{issuables.length}}</p>
               </div>
@@ -166,9 +207,10 @@
 </template>
 
 <script>
+import VerifiableID from '../../waltid-web-wallet/components/credentials/VerifiableID.vue';
 import CredentialEditor from "../components/CredentialEditor.vue";
 export default {
-  components: { CredentialEditor },
+  components: { CredentialEditor, VerifiableID },
   data() {
     return {
       checkedIssuances: [],

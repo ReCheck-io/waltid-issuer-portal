@@ -300,6 +300,7 @@ export default {
         selectedIssuables,
         { params: params }
       );
+      console.log("those params ", params);
       console.log(JSON.stringify(walletUrl));
       setTimeout(() => {
         window.location = walletUrl;

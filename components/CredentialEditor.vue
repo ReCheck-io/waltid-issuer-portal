@@ -5,7 +5,7 @@
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-card-text"></i>
+              <i class="bi bi-card-text"> Name</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.FIRST_NAME')" aria-label="First name" v-model="issuable.credentialData.credentialSubject.firstName">
             </div>
           </div>
@@ -13,15 +13,23 @@
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-card-text"></i>
+              <i class="bi bi-card-text"> Family name</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.LAST_NAME')" aria-label="Family name" v-model="issuable.credentialData.credentialSubject.familyName">
+            </div>
+          </div>
+        </div>
+         <div class="row _forms mb-3">
+          <div class="col-11">
+            <div class="right-inner-addon input-container">
+              <i class="bi bi-card-text"> Name and family name at birth</i>
+              <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.NAME_AND_FAMILY_NAME_AT_BIRTH')" aria-label="Name and family name at birth" v-model="issuable.credentialData.credentialSubject.nameAndFamilyNameAtBirth">
             </div>
           </div>
         </div>
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-people"></i>
+              <i class="bi bi-people"> Gender</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.GENDER')" aria-label="Gender" v-model="issuable.credentialData.credentialSubject.gender">
             </div>
           </div>
@@ -29,7 +37,7 @@
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-calendar2-event"></i>
+              <i class="bi bi-calendar2-event"> Date of birth</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.DATE_OF_BIRTH')" aria-label="DateOfBirth" v-model="issuable.credentialData.credentialSubject.dateOfBirth">
             </div>
           </div>
@@ -37,7 +45,7 @@
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-map"></i>
+              <i class="bi bi-map"> Nationality</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.NATIONALITY')" aria-label="Nationality" v-model="issuable.credentialData.credentialSubject.nationality">
             </div>
           </div>
@@ -45,7 +53,7 @@
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-geo-alt"></i>
+              <i class="bi bi-geo-alt"> Place of birth</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.PLACE_OF_BIRTH')" aria-label="PlaceOfBirth" v-model="issuable.credentialData.credentialSubject.placeOfBirth">
             </div>
           </div>
@@ -53,7 +61,7 @@
         <div class="row _forms mb-3">
           <div class="col-11">
             <div class="right-inner-addon input-container">
-              <i class="bi bi-credit-card-2-front"></i>
+              <i class="bi bi-credit-card-2-front"> ID</i>
               <input :disabled="!enableEditor" type="text" :class="enableEditor ? 'form-control border-primary' : 'form-control'" :placeholder="$t('CREDENTIAL.PERSONAL_IDENTIFIER')" aria-label="PersonalIdentifier" v-model="issuable.credentialData.credentialSubject.personalIdentifier">
             </div>
           </div>
