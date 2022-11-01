@@ -1,107 +1,102 @@
 export default {
-  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'waltid-issuer-portal',
-    htmlAttrs: {
-      lang: 'en'
-    },
+    title: 'EBSI Issuer',
+    htmlAttrs: { lang: 'en' },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [
-      { rel: 'icon', type: 'image/png', href: '/favicon.png' }
-    ]
+    link: [{ rel: 'icon', type: 'image/png', href: '/ebsi-logo.svg' }],
   },
 
-  // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-    "@/assets/css/core.css",
-    "@/assets/css/animate.min.css",
-    "@/assets/css/animations.css",
-    "@/assets/css/bootstrap-icons.css"
-  ],
+  css: ['~/assets/scss/fonts.scss', '~/assets/scss/main.scss'],
 
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    '@/plugins/bootstrap',
-    '@/plugins/bootstrap-script'
-  ],
-
-  // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
-  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  /*buildModules: [
-    // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module'
-  ],*/
+  module: {
+    rules: [
+      {
+        test: /\.s[ac]ss$/i,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+    ],
+  },
 
-  // Modules: https://go.nuxtjs.dev/config-modules
+  buildModules: ['@nuxt/postcss8'],
   modules: [
-    // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt',
-    // https://go.nuxtjs.dev/axios
+    '@nuxtjs/svg-sprite',
+    '@nuxtjs/auth-next',
     '@nuxtjs/axios',
-    "@nuxtjs/auth-next",
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
+  svgSprite: {
+    input: '~/assets/svg/',
+    output: '~/assets/svg/gen',
+  },
+
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    proxy: true
+    proxy: true,
   },
 
   proxy: {
-    // '/issuer-api/': 'https://wallet.waltid.org',
-    // '/onboarding-api/': 'https://wallet.waltid.org',
-    // '/api/': 'https://wallet.waltid.org'
-    '/issuer-api/': 'http://localhost:8080/',
-    '/onboarding-api/': 'http://localhost:8080/',
-    '/api/': 'http://localhost:8080/'
+    '/issuer-api/':
+      process.env.NODE_ENV === 'production'
+        ? 'https://wallet.waltid.org'
+        : 'http://localhost:8080/',
+    '/onboarding-api/':
+      process.env.NODE_ENV === 'production'
+        ? 'https://wallet.waltid.org'
+        : 'http://localhost:8080/',
+    '/api/':
+      process.env.NODE_ENV === 'production'
+        ? 'https://wallet.waltid.org'
+        : 'http://localhost:8080/',
   },
 
   auth: {
     strategies: {
       local: {
         token: {
-          property: "token",
+          property: 'token',
           global: true,
           required: true,
-          type: "Bearer"
+          type: 'Bearer',
         },
         user: false,
-        // endpoints: {
-        //   login: { url: "api/auth/login", method: "post" },
-        //   user: { url: "api/auth/userInfo", method: "get" },
-        //   logout: false
-        // }
       },
       localOnboarding: {
         scheme: 'local',
         token: {
-          property: "token",
+          property: 'token',
           global: true,
           required: true,
-          type: "Bearer"
+          type: 'Bearer',
         },
         user: false,
         endpoints: {
-          login: { url: "onboarding-api/auth/userToken", method: "get" },
-          user: { url: "api/auth/userInfo", method: "get" },
-          logout: false
-        }
-      }
+          login: {
+            url: 'onboarding-api/auth/userToken',
+            method: 'get',
+          },
+          user: {
+            url: 'api/auth/userInfo',
+            method: 'get',
+          },
+          logout: false,
+        },
+      },
     },
     // redirect: {
-    //   login: '/login',
     //   logout: '/logout',
-    //   home: '/Credentials'
+    //   login: '/login',
+    //   register: '/register',
+    //   home: '/Credentials',
     // },
-    cookie: false
+    cookie: false,
   },
 
   i18n: {
@@ -115,28 +110,36 @@ export default {
     defaultLocale: 'en',
     strategy: 'no_prefix',
     vueI18n: {
-      fallbackLocale: 'en'
-    }
+      fallbackLocale: 'en',
+    },
   },
 
   router: {
-    middleware: ["auth"]
+    middleware: ['auth'],
   },
 
   publicRuntimeConfig: {
-    copyright: process.env.COPYRIGHT || 'powered by walt.id',
-    salt: process.env.SALT
+    copyright: process.env.COPYRIGHT || 'powered by ReCheck',
+    salt: process.env.SALT,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     babel: {
-      compact: true
-    }
+      compact: true,
+    },
+    postcss: {
+      plugins: {
+        'postcss-import': {},
+        'tailwindcss/nesting': {},
+        tailwindcss: {},
+        autoprefixer: {},
+      },
+    },
   },
 
   ssr: false,
   server: {
-    port: 8000
-  }
+    port: 8000,
+  },
 }
