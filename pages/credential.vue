@@ -1,59 +1,28 @@
 <template>
   <div>
-    <section
-      class="bg-white px-4 md:px-28 py-8 flex items-center justify-between mb-14">
-      <h1 class="text-5xl font-medium text-dark">My Credentials</h1>
-      <BaseButton variant="primary">
-        <span>Add New</span>
-        <slot name="append">
-          <svg-icon name="plus" class="!w-5 !h-5 ml-2" />
-        </slot>
-      </BaseButton>
-    </section>
-
-    <section class="h-full px-4 md:px-28 pb-8">
-      <p class="font-medium text-gray-dark mb-9">
-        Added {{ issuables.credentials.length }} Credentials
-      </p>
-
-      <div class="overflow-x-auto relative">
-        <table class="w-full text-sm text-left text-gray-500">
-          <thead
-            class="text-gray-base uppercase bg-white border-b-[7px] border-light">
-            <th scope="col" class="p-6 text-sm font-medium">Type</th>
-            <th scope="col" class="p-6 text-sm font-medium">Name</th>
-            <th scope="col" class="p-6 text-sm font-medium">Expiration Date</th>
-            <th scope="col" class="p-6 text-sm font-medium">Issure Date</th>
-            <th scope="col" class="p-6 text-sm font-medium">Date added</th>
-            <th scope="col" class="p-6 text-sm font-medium">Status</th>
-            <th scope="col" class="p-6 text-sm font-medium"></th>
-          </thead>
-          <tbody
-            class="mt-10"
-            v-for="issuable in issuables.credentials"
-            :key="issuable.type">
-            <TableRow
-              class="bg-white text-gray-dark border-b-2 text-base font-medium"
-              :type="issuable.type"
-              :data="issuable" />
-          </tbody>
-        </table>
+    <section class="bg-white px-6 py-3 flex items-center justify-between">
+      <nuxt-link to="/" class="text-xl font-medium text-dark">
+        <svg-icon name="chevron-left" />
+        <span>Back</span>
+      </nuxt-link>
+      <div class="flex items-center space-x-3">
+        <BaseButton variant="primary" size="sm">Edit</BaseButton>
       </div>
     </section>
+
+    <section class="h-full px-4 md:px-28 pb-8">asd</section>
   </div>
 </template>
 
 <script>
 import BaseButton from '../components/common/BaseButton.vue'
-import TableRow from '../components/TableRow.vue'
 
 export default {
-  layout: 'dashboard',
-  auth: true,
+  layout: 'editor',
+  auth: false,
 
   components: {
     BaseButton,
-    TableRow,
   },
 
   head() {

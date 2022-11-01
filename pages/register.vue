@@ -1,32 +1,23 @@
 <template>
-  <div class="w-full min-h-screen flex relative">
+  <div class="w-full min-h-screen flex">
     <div
       class="left-side py-8 px-10 w-full max-w-full lg:max-w-[52%] bg-white flex flex-col justify-between">
       <div class="mt-36 mb-20 md:px-8 xl:px-28 flex flex-col gap-6">
         <div class="mb-8">
           <h1 class="mb-3 text-[40px] font-medium text-dark leading-[48px]">
-            Welcome Back
+            Welcome <span>👋</span> <br />
+            Register to EBSI
           </h1>
           <p class="text-base font-medium text-gray-base leading-[19px]">
-            Enter your credentials to access your account.
+            Create account to start using EBSI.
           </p>
         </div>
 
-        <BaseButton variant="clear" disabled>
-          {{ $t('LOG_IN_WITH_WALLET') }}
-        </BaseButton>
-
-        <div
-          class="my-6 h-3 border-b-[1px] border-gray-light text-base text-center">
-          <span class="bg-white font-medium text-gray-base px-3">or</span>
-        </div>
-
-        <form @submit="login" class="flex flex-col gap-6">
+        <form @submit.prevent="register" class="flex flex-col gap-6">
           <BaseInput
             name="email"
             type="email"
             :label="$t('EMAIL')"
-            autoComplete="off"
             placeholder="Enter your email address"
             v-model="email" />
           <BaseInput
@@ -35,25 +26,30 @@
             :label="$t('PASSWORD')"
             placeholder="Enter your password"
             v-model="password" />
+          <BaseInput
+            name="rePassword"
+            type="password"
+            :label="$t('RE_PASSWORD')"
+            placeholder="Enter your password"
+            v-model="rePassword" />
           <BaseCheckbox
-            v-model="issuer"
+            id="terms"
+            v-model="terms"
             :inputValue="true"
-            id="isIssuer"
-            label="as Issuer"
+            label="I agree to the Terms & Conditions and Privacy Policy"
             class="my-2" />
 
-          <BaseButton variant="primary" type="submit">
-            {{ $t('LOG_IN') }}
+          <BaseButton variant="primary" @click="register">
+            {{ $t('CREATE_ACCOUNT') }}
           </BaseButton>
 
           <p class="font-medium text-gray-dark">
-            Not a member?
-            <a href="/register" class="text-primary">
-              {{ $t('CREATE_ACCOUNT') }}
-            </a>
+            Have an Account?
+            <a href="/" class="text-primary">{{ $t('LOG_IN') }}</a>
           </p>
         </form>
       </div>
+
       <footer class="md-h:pb-8 text-center">
         <p class="text-gray-base">
           Copyright {{ currenYear }} &copy; EBSI Inc.
@@ -62,7 +58,7 @@
       </footer>
     </div>
     <div
-      class="right side py-8 px-10 w-full max-w-[48%] bg-light hidden lg:flex relative justify-end">
+      class="py-8 px-10 w-full max-w-[48%] bg-light hidden lg:flex relative justify-end">
       <img
         alt="Laptop Illustration"
         src="~assets/images/laptop-mockup.png"
@@ -79,14 +75,15 @@ import BaseButton from '../components/common/BaseButton.vue'
 import BaseInput from '../components/common/BaseInput.vue'
 
 export default {
-  name: 'LoginPage',
+  name: 'RegisterPage',
   layout: 'auth',
+  auth: false,
 
-  components: { BaseButton, BaseInput, BaseCheckbox },
+  components: { BaseCheckbox, BaseButton, BaseInput },
 
   head() {
     return {
-      title: 'Login - EBSI Issuer',
+      title: 'Register - EBSI Issuer',
     }
   },
 
@@ -94,30 +91,25 @@ export default {
     return {
       email: '',
       password: '',
-      issuer: false,
+      rePassword: '',
+      terms: false,
 
       error: null,
 
       currenYear: new Date().getFullYear(),
     }
   },
-  methods: {
-    async login(event) {
-      console.log(event)
-      event.preventDefault()
 
-      console.log('coming here ? ', this.issuer)
-      if (this.issuer) {
-        this.$router.push('/issuer')
-      }
+  methods: {
+    async register() {
       try {
-        console.log(this.email, this.password)
         const loginResponse = await this.$auth.loginWith('local', {
           data: {
             id: this.email,
             password: this.password,
           },
         })
+        console.log(loginResponse)
         this.$auth.setUser(loginResponse.data)
       } catch (e) {
         this.error = e.response.data.message
