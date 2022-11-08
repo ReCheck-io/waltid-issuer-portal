@@ -5,7 +5,12 @@
 
     <nav class="w-full flex items-center justify-between">
       <div class="flex items-center space-x-6">
-        <nuxt-link to="/" class="nav-link">My Credentials</nuxt-link>
+        <nuxt-link to="/" class="nav-link" v-if="!isIssuer">
+          Dashboard
+        </nuxt-link>
+        <nuxt-link to="/issuer" class="nav-link" v-if="isIssuer">
+          Document Requests
+        </nuxt-link>
       </div>
       <div class="flex items-center space-x-6">
         <nuxt-link to="/settings" class="nav-link space-x-2">
@@ -15,7 +20,7 @@
           type="button"
           @click="signout"
           class="nav-link flex items-center space-x-2">
-          <span class="pt-0.5">Sign Out</span>
+          <span class="pt-0.5">Log Out</span>
           <svg-icon name="logout" class="!w-5 !h-5" />
         </button>
       </div>
@@ -30,6 +35,12 @@ export default {
   name: 'Navbar',
 
   components: { EbsiLogo },
+
+  data() {
+    return {
+      isIssuer: this.$router.currentRoute.path.includes('issuer'),
+    }
+  },
 
   methods: {
     signout() {

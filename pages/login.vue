@@ -103,13 +103,14 @@ export default {
   },
   methods: {
     async login(event) {
-      console.log(event)
       event.preventDefault()
 
       console.log('coming here ? ', this.issuer)
+
       if (this.issuer) {
         this.$router.push('/issuer')
       }
+
       try {
         console.log(this.email, this.password)
         const loginResponse = await this.$auth.loginWith('local', {

@@ -13,7 +13,6 @@
       :disabled="disabled"
       :placeholder="placeholder"
       :autoComplete="autoComplete"
-      :value="inputValue"
       v-model="model"
       class="field" />
   </div>
@@ -34,7 +33,10 @@ export default {
       type: String,
       default: null,
     },
-    inputValue: String,
+    value: {
+      type: String,
+      // required: true,
+    },
     placeholder: {
       type: String,
       default: '',

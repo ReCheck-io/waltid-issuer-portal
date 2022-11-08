@@ -23,5 +23,11 @@ module.exports = {
     'no-unused-vars': 'off',
     'func-names': 'off',
     'no-plusplus': 'off',
+    'no-shadow': 'off',
+    'global-require': 'off',
+
+    // IMPORT
+    'import/prefer-default-export': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
 }

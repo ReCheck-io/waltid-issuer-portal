@@ -1,32 +1,32 @@
 /* eslint-disable import/prefer-default-export */
 
 export const convertDocType = (type) => {
-  let str = ''
+  let str = { label: '', icon: 'null' }
 
   switch (type) {
     case 'VerifiableId':
-      str = 'ID Card'
+      str = { label: 'ID Card', icon: 'id-card' }
       break
     case 'VerifiableDiploma':
-      str = 'Diploma'
+      str = { label: 'Diploma', icon: 'null' }
       break
     case 'VerifiableVaccinationCertificate':
-      str = 'Vaccination Certificate'
+      str = { label: 'Vaccination Certificate', icon: 'null' }
       break
     case 'ProofOfResidence':
-      str = 'Proof Of Residence'
+      str = { label: 'Proof Of Residence', icon: 'null' }
       break
     case 'ParticipantCredential':
-      str = 'Participant Credential'
+      str = { label: 'Participant Credential', icon: 'null' }
       break
     case 'Europass':
-      str = 'Europass'
+      str = { label: 'Europass', icon: 'null' }
       break
     case 'OpenBadgeCredential':
-      str = 'Open Badge Credential'
+      str = { label: 'Open Badge Credential', icon: 'null' }
       break
     default:
-      return 'N/A'
+      return { label: 'N/A', icon: 'null' }
   }
 
   return str

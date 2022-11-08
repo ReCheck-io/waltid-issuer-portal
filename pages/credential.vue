@@ -1,16 +1,22 @@
 <template>
   <div>
-    <section class="bg-white px-6 py-3 flex items-center justify-between">
-      <nuxt-link to="/" class="text-xl font-medium text-dark">
+    <section
+      class="bg-white px-6 py-3 flex items-center justify-between border-b-[1px] border-gray-light/25">
+      <button @click="$router.push('/')" class="text-xl font-medium text-dark">
         <svg-icon name="chevron-left" />
         <span>Back</span>
-      </nuxt-link>
+      </button>
       <div class="flex items-center space-x-3">
-        <BaseButton variant="primary" size="sm">Edit</BaseButton>
+        <BaseButton size="sm" variant="success"> Confirm </BaseButton>
+        <BaseButton size="sm" variant="error" @click="deleteCredential">
+          Reject
+        </BaseButton>
       </div>
     </section>
 
-    <section class="h-full px-4 md:px-28 pb-8">asd</section>
+    <section class="h-[calc(100vh-62px)] w-full">
+      <CredentialView :credential="credential" />
+    </section>
   </div>
 </template>
 
@@ -18,78 +24,49 @@
 import BaseButton from '../components/common/BaseButton.vue'
 
 export default {
-  layout: 'editor',
-  auth: false,
+  name: 'Credential',
+  layout: 'viewer',
 
-  components: {
-    BaseButton,
-  },
-
-  head() {
-    return {
-      title: 'My Credentials - EBSI Issuer',
-    }
-  },
+  components: { BaseButton },
 
   data() {
     return {
-      checkedCredentials: [],
-      enableCredentialEditor: false,
-      btnLoading: false,
+      credentialContent: '',
+      coppied: false,
+      onDelete: false,
+      deleted: false,
     }
   },
 
-  computed: {
-    sessionId() {
-      console.log('SESSION ID', this.$route.query)
-      return this.$route.query.sessionId
-    },
-  },
   async asyncData({ $axios, query }) {
-    const wallets = await $axios.$get('/issuer-api/wallets/list')
-    console.log('These wallets:', JSON.stringify(wallets))
-
-    const issuables = await $axios.$get(
-      '/issuer-api/credentials/listIssuables',
-      { params: query },
-    )
-    console.log('issuables', JSON.stringify(issuables))
-    return { wallets, issuables }
+    // TODO: select DID to use
+    const credList = await $axios.$get('/api/wallet/credentials/list', {
+      params: { id: query.id },
+    })
+    console.log('credList', credList, query)
+    // this.credentialContent = credList.list[0]
+    const credential = credList.list[0]
+    console.log(111, credential)
+    return { credential }
   },
+
   methods: {
-    reset() {
-      this.enableCredentialEditor = false
-      console.log(this.issuables[0])
-    },
-    enableInput() {
-      this.enableCredentialEditor = true
-      this.btnDisabled = false
-    },
-    disableInput() {
-      this.enableCredentialEditor = false
-      this.btnDisabled = true
-    },
-    async goToWallet(walletId) {
-      this.btnLoading = true
-      console.log('Selected issuables:', this.checkedCredentials)
-      const selectedIssuables = {
-        credentials: this.issuables.credentials.filter(
-          (c) => this.checkedCredentials.findIndex((cc) => cc === c.type) >= 0,
-        ),
+    async confirmCredential() {
+      if (this.credential !== null) {
+        const delResp = await this.$axios.delete(
+          `/api/wallet/credentials/delete/${encodeURIComponent(
+            this.credential.id,
+          )}`,
+        )
+        this.onDelete = true
+        if (delResp.status === 200) {
+          this.onDelete = false
+          this.deleted = true
+          setTimeout(() => {
+            this.$router.back()
+          }, 2500)
+        }
       }
-      console.log('Selected issuables:', JSON.stringify(selectedIssuables))
-      const params =
-        this.sessionId != null ? { sessionId: this.sessionId } : { walletId }
-      const walletUrl = await this.$axios.$post(
-        '/issuer-api/credentials/issuance/request',
-        selectedIssuables,
-        { params },
-      )
-      console.log('those params ', params)
-      console.log(JSON.stringify(walletUrl))
-      setTimeout(() => {
-        window.location = walletUrl
-      }, 2000)
     },
   },
 }

@@ -67,6 +67,17 @@ export default {
           type: 'Bearer',
         },
         user: false,
+        endpoints: {
+          login: {
+            url: 'api/auth/login',
+            method: 'post',
+          },
+          user: {
+            url: 'api/auth/userInfo',
+            method: 'get',
+          },
+          // logout: false,
+        },
       },
       localOnboarding: {
         scheme: 'local',
@@ -91,10 +102,9 @@ export default {
       },
     },
     // redirect: {
-    //   logout: '/logout',
     //   login: '/login',
-    //   register: '/register',
-    //   home: '/Credentials',
+    //   logout: '/logout',
+    //   home: '/Credentials'
     // },
     cookie: false,
   },
@@ -130,8 +140,6 @@ export default {
     },
     postcss: {
       plugins: {
-        'postcss-import': {},
-        'tailwindcss/nesting': {},
         tailwindcss: {},
         autoprefixer: {},
       },

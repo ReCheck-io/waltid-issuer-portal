@@ -1,59 +1,104 @@
 <template>
   <div>
     <section
-      class="bg-white px-4 md:px-28 py-8 flex items-center justify-between mb-14">
-      <h1 class="text-5xl font-medium text-dark">My Credentials</h1>
-      <BaseButton variant="primary">
-        <span>Add New</span>
-        <slot name="append">
-          <svg-icon name="plus" class="!w-5 !h-5 ml-2" />
-        </slot>
-      </BaseButton>
+      class="bg-white px-4 md:px-28 py-8 flex items-center justify-between mb-8">
+      <h1 class="text-5xl font-medium text-dark">Dashboard</h1>
     </section>
 
-    <section class="h-full px-4 md:px-28 pb-8">
-      <p class="font-medium text-gray-dark mb-9">
-        Added {{ issuables.credentials.length }} Credentials
-      </p>
-
-      <div class="overflow-x-auto relative">
-        <table class="w-full text-sm text-left text-gray-500">
-          <thead
-            class="text-gray-base uppercase bg-white border-b-[7px] border-light">
-            <th scope="col" class="p-6 text-sm font-medium">Type</th>
-            <th scope="col" class="p-6 text-sm font-medium">Name</th>
-            <th scope="col" class="p-6 text-sm font-medium">Expiration Date</th>
-            <th scope="col" class="p-6 text-sm font-medium">Issure Date</th>
-            <th scope="col" class="p-6 text-sm font-medium">Date added</th>
-            <th scope="col" class="p-6 text-sm font-medium">Status</th>
-            <th scope="col" class="p-6 text-sm font-medium"></th>
-          </thead>
-          <tbody
-            class="mt-10"
-            v-for="issuable in issuables.credentials"
-            :key="issuable.type">
-            <TableRow
-              class="bg-white text-gray-dark border-b-2 text-base font-medium"
-              :type="issuable.type"
-              :data="issuable" />
-          </tbody>
-        </table>
+    <section class="h-full px-4 md:px-28 pb-8 relative">
+      <div
+        class="flex items-center"
+        v-for="issuable in issuables.credentials"
+        :key="issuable.type">
+        <TemplateCard :type="issuable.type" @create="showModal" />
       </div>
+
+      <Modal
+        v-show="isModalVisible"
+        @close="isModalVisible = false"
+        @submit="goToWallet(wallets[0])">
+        <template #header>Request Document</template>
+        <template #content>
+          <form action="" class="flex flex-col gap-y-6">
+            <div class="flex items-center space-x-8">
+              <BaseInput
+                label="Name"
+                name="firstName"
+                placeholder="Please enter your Name"
+                v-model="formData.firstName"
+                block />
+              <BaseInput
+                label="Family Name"
+                name="familyName"
+                placeholder="Please enter your Family Name"
+                v-model="formData.familyName"
+                block />
+            </div>
+
+            <BaseInput
+              label="Name and Family Name at Birth"
+              name="nameAndFamilyNameAtBirth"
+              placeholder="Please enter your Full Name"
+              v-model="formData.nameAndFamilyNameAtBirth"
+              block />
+
+            <div class="flex items-center space-x-8">
+              <BaseInput
+                label="Date of Birth"
+                name="dateOfBirth"
+                placeholder="Please enter your Date Of Birth"
+                v-model="formData.dateOfBirth"
+                block />
+              <BaseInput
+                label="Place of Birth"
+                name="placeofBirth"
+                placeholder="Please enter your Place of Birth"
+                v-model="formData.placeOfBirth"
+                block />
+            </div>
+
+            <BaseInput
+              label="Current Address"
+              name="currentAddress"
+              placeholder="Please enter your Current Address"
+              v-model="formData.currentAddress"
+              block />
+
+            <div class="flex items-center space-x-8">
+              <BaseInput
+                label="Gender"
+                name="gender"
+                placeholder="Please enter your Gender"
+                v-model="formData.gender"
+                block />
+
+              <BaseInput
+                label="Personal Identifier"
+                name="personalIdentifier"
+                placeholder="Please enter your Personal Identifier"
+                v-model="formData.personalIdentifier"
+                block />
+            </div>
+          </form>
+        </template>
+      </Modal>
     </section>
   </div>
 </template>
 
 <script>
-import BaseButton from '../components/common/BaseButton.vue'
-import TableRow from '../components/TableRow.vue'
+import BaseInput from '../components/common/BaseInput.vue'
+import TemplateCard from '../components/Card.vue'
+import Modal from '../components/Modal.vue'
 
 export default {
   layout: 'dashboard',
-  auth: true,
+  // auth: true,
 
   components: {
-    BaseButton,
-    TableRow,
+    TemplateCard,
+    BaseInput,
+    Modal,
   },
 
   head() {
@@ -64,7 +109,21 @@ export default {
 
   data() {
     return {
-      checkedCredentials: [],
+      isModalVisible: false,
+      selectedTemplateType: '',
+
+      formData: {
+        firstName: '',
+        familyName: '',
+        nameAndFamilyNameAtBirth: '',
+        dateOfBirth: '',
+        placeOfBirth: '',
+        gender: '',
+        currentAddress: '',
+        personalIdentifier: '',
+      },
+
+      checkedCredentials: ['VerifiableId'],
       enableCredentialEditor: false,
       btnLoading: false,
     }
@@ -82,32 +141,35 @@ export default {
 
     const issuables = await $axios.$get(
       '/issuer-api/credentials/listIssuables',
-      { params: query },
+      {
+        params: query,
+      },
     )
-    console.log('issuables', JSON.stringify(issuables))
+    issuables.credentials = issuables.credentials.filter(
+      (i) => i.type === 'VerifiableId',
+    )
+    console.log('issuables', issuables.credentials.length)
     return { wallets, issuables }
   },
   methods: {
-    reset() {
-      this.enableCredentialEditor = false
-      console.log(this.issuables[0])
-    },
-    enableInput() {
-      this.enableCredentialEditor = true
-      this.btnDisabled = false
-    },
-    disableInput() {
-      this.enableCredentialEditor = false
-      this.btnDisabled = true
+    showModal(type) {
+      this.isModalVisible = true
+      this.selectedTemplateType = type
     },
     async goToWallet(walletId) {
-      this.btnLoading = true
+      this.isModalVisible = false
       console.log('Selected issuables:', this.checkedCredentials)
       const selectedIssuables = {
         credentials: this.issuables.credentials.filter(
           (c) => this.checkedCredentials.findIndex((cc) => cc === c.type) >= 0,
         ),
       }
+      selectedIssuables.credentials[0].credentialData.credentialSubject = {
+        ...selectedIssuables.credentials[0].credentialData.credentialSubject,
+        ...this.formData,
+        currentAddress: [this.formData.currentAddress],
+      }
+      console.log('selectedIssuables', selectedIssuables)
       console.log('Selected issuables:', JSON.stringify(selectedIssuables))
       const params =
         this.sessionId != null ? { sessionId: this.sessionId } : { walletId }

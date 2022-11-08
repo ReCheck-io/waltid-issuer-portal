@@ -245,6 +245,7 @@ import { copyText } from 'vue3-clipboard'
 export default {
   middleware: ['onboarding'],
   auth: false,
+
   data() {
     return {
       wizardIndex: 0,

@@ -1,31 +1,31 @@
 <template>
-  <tr>
-    <td class="py-4 px-6">{{ tableData.type }}</td>
+  <tr class="hover:cursor-pointer" @click="$emit('showData', data.issuanceID)">
     <td class="py-4 px-6">
-      {{ tableData.fullName || 'N/A' }}
+      <div class="flex items-center gap-x-3">
+        <span
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-[#D3E6F8]">
+          <svg-icon name="id-card" class="!w-6 !h-6" />
+        </span>
+        {{ tableData.type?.label || 'N/A' }}
+      </div>
     </td>
     <td class="py-4 px-6">
-      {{ tableData.endedAtTime || 'N/A' }}
+      {{ tableData.nameAndFamilyNameAtBirth || 'N/A' }}
     </td>
-    <td class="py-4 px-6">
+    <td v-if="isIssuer" class="py-4 px-6">
+      {{ tableData.dateOfBirth || 'N/A' }}
+    </td>
+    <td v-if="isIssuer" class="py-4 px-6">
+      {{ tableData.placeOfBirth || 'N/A' }}
+    </td>
+    <td v-if="!isIssuer" class="py-4 px-6">
       {{ tableData.startedAtTime || 'N/A' }}
     </td>
-    <td class="py-4 px-6">{{ tableData.dateAdded || 'N/A' }}</td>
-    <td class="py-4 px-6">
-      <Pill variant="pending">Pending</Pill>
+    <td v-if="!isIssuer" class="py-4 px-6">
+      {{ tableData.dateAdded || 'N/A' }}
     </td>
     <td class="py-4 px-6">
-      <div class="space-x-3">
-        <button
-          type="button"
-          class="text-gray-dark"
-          @click="pushToCredentialPage()">
-          <svg-icon name="eye" class="!w-5 !h-5" />
-        </button>
-        <button type="button" class="text-gray-dark">
-          <svg-icon name="vertical-dots" class="!w-4 !h-4" />
-        </button>
-      </div>
+      <Pill variant="pending">Pending</Pill>
     </td>
   </tr>
 </template>
@@ -46,33 +46,34 @@ export default {
     data: {
       type: Object,
     },
+    isIssuer: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
       localType: this.type,
-      tableData: { type: '', fullName: '', endedAtTime: '', startedAtTime: '' },
+      tableData: {},
     }
   },
 
-  methods: {
-    pushToCredentialPage() {
-      this.$router.push('/credential')
-    },
-  },
+  methods: {},
 
   mounted() {
     if (!this.localType) return
 
-    const { credentialSubject } = this.data.credentialData
-
-    this.tableData = {
-      type: convertDocType(this.localType),
+    let rowData = this.data
+    if (this.data.vc) {
+      rowData = JSON.parse(this.data.vc)?.credentials?.[0]
     }
+    console.log('rowData', rowData)
+    const { credentialSubject } = rowData.credentialData
 
     switch (this.localType) {
       case 'VerifiableId':
-        this.tableData.fullName = credentialSubject?.nameAndFamilyNameAtBirth
+        this.tableData = credentialSubject
 
         break
       case 'VerifiableDiploma':
@@ -104,6 +105,8 @@ export default {
         console.log('Not supported issueance type!!', this.type, this.data)
         break
     }
+
+    this.tableData.type = convertDocType(rowData.type)
   },
 }
 </script>

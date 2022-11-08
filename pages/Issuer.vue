@@ -2,18 +2,12 @@
 <template>
   <div>
     <section
-      class="bg-white px-4 md:px-28 py-8 flex items-center justify-between mb-14">
-      <h1 class="text-5xl font-medium text-dark">My Credentials (Issuer)</h1>
-      <BaseButton variant="primary">
-        <span>Add New</span>
-        <slot name="append">
-          <svg-icon name="plus" class="!w-5 !h-5 ml-2" />
-        </slot>
-      </BaseButton>
+      class="bg-white px-4 md:px-28 py-8 flex items-center justify-between mb-8">
+      <h1 class="text-5xl font-medium text-dark">Document Requests (Issuer)</h1>
     </section>
 
     <section class="h-full px-4 md:px-28 pb-8">
-      <p class="font-medium text-gray-dark mb-9">
+      <p class="font-medium text-gray-dark mb-8">
         Added {{ issuables.length }} Credentials
       </p>
 
@@ -23,11 +17,9 @@
             class="text-gray-base uppercase bg-white border-b-[7px] border-light">
             <th scope="col" class="p-6 text-sm font-medium">Type</th>
             <th scope="col" class="p-6 text-sm font-medium">Name</th>
-            <th scope="col" class="p-6 text-sm font-medium">Expiration Date</th>
-            <th scope="col" class="p-6 text-sm font-medium">Issure Date</th>
-            <th scope="col" class="p-6 text-sm font-medium">Date added</th>
+            <th scope="col" class="p-6 text-sm font-medium">Date Of Birth</th>
+            <th scope="col" class="p-6 text-sm font-medium">Place Of Birth</th>
             <th scope="col" class="p-6 text-sm font-medium">Status</th>
-            <th scope="col" class="p-6 text-sm font-medium"></th>
           </thead>
           <tbody
             class="mt-10"
@@ -35,113 +27,127 @@
             :key="issuable.issuanceID">
             <TableRow
               class="bg-white text-gray-dark border-b-2 text-base font-medium"
-              :type="issuable.type"
-              :data="issuable" />
+              type="VerifiableId"
+              :data="issuable"
+              :isIssuer="isIssuer"
+              @showData="showModal" />
           </tbody>
         </table>
       </div>
-    </section>
 
-    <section class="py-5 text-center">
-      <div class="row py-lg-5">
-        <div class="col-lg-6 col-md-8 mx-auto">
-          <form>
-            <div
-              class="d-flex flex-column align-items-md-center align-items-sm-start text-start">
-              <div
-                class="form-check col-md-9 col-sm-12 mb-3"
-                v-for="issuable in issuables"
-                :key="issuable.issuanceID">
-                <input
-                  class="form-check-input me-4"
-                  type="checkbox"
-                  :id="'issuable-' + issuable.id"
-                  :name="'issuable-' + issuable.id"
-                  :value="issuable.issuanceID"
-                  v-model="checkedIssuances" />
-                <label class="form-check-label"
-                  >Verifiable ID for {{ $t(issuable.id) }} with issuance id:
-                  {{ issuable.issuanceID }}
-                </label>
-                <button
-                  type="button"
-                  data-bs-toggle="modal"
-                  :data-bs-target="'#credentilModalVerifiableIdRead'"
-                  class="text-primary _view-btn mb-2">
-                  <i class="bi bi-box-arrow-up-right p-1"></i>
-                </button>
-                <!--Credendtial Modal -->
-                <div
-                  class="modal fade"
-                  :id="'credentilModalVerifiableIdRead'"
-                  tabindex="-1"
-                  :aria-labelledby="'credentilModalVerifiableIdRead'"
-                  aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">
-                          {{ 'Credentail Data' }}
-                        </h5>
-                      </div>
-                      <VerifiableIDRead
-                        :issuable="JSON.parse(issuable.vc)"
-                        :enableEditor="enableCredentialEditor"
-                        class="modal-body" />
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-primary"
-                          data-bs-dismiss="modal"
-                          @click="reset">
-                          {{ $t('CLOSE') }}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- <p>This {{ issuables.length }}</p> -->
+      <Modal v-show="isModalVisible" @close="isModalVisible = false">
+        <template #header>Review Document</template>
+        <template #content>
+          <form class="flex flex-col gap-y-6">
+            <div class="flex items-center space-x-8">
+              <BaseInput
+                label="Name"
+                name="firstName"
+                placeholder="Please enter your Name"
+                v-model="formData.firstName"
+                block
+                :disabled="isIssuer" />
+              <BaseInput
+                label="Family Name"
+                name="familyName"
+                placeholder="Please enter your Family Name"
+                v-model="formData.familyName"
+                block
+                :disabled="isIssuer" />
+            </div>
+
+            <BaseInput
+              label="Name and Family Name at Birth"
+              name="nameAndFamilyNameAtBirth"
+              placeholder="Please enter your Full Name"
+              v-model="formData.nameAndFamilyNameAtBirth"
+              block
+              :disabled="isIssuer" />
+
+            <div class="flex items-center space-x-8">
+              <BaseInput
+                label="Date of Birth"
+                name="dateOfBirth"
+                placeholder="Please enter your Date Of Birth"
+                v-model="formData.dateOfBirth"
+                block
+                :disabled="isIssuer" />
+              <BaseInput
+                label="Place of Birth"
+                name="placeofBirth"
+                placeholder="Please enter your Place of Birth"
+                v-model="formData.placeOfBirth"
+                block
+                :disabled="isIssuer" />
+            </div>
+
+            <BaseInput
+              label="Current Address"
+              name="currentAddress"
+              placeholder="Please enter your Current Address"
+              v-model="formData.currentAddress"
+              block
+              :disabled="isIssuer" />
+
+            <div class="flex items-center space-x-8">
+              <BaseInput
+                label="Gender"
+                name="gender"
+                placeholder="Please enter your Gender"
+                v-model="formData.gender"
+                block
+                :disabled="isIssuer" />
+              <BaseInput
+                label="Personal Identifier"
+                name="personalIdentifier"
+                placeholder="Please enter your Personal Identifier"
+                v-model="formData.personalIdentifier"
+                block
+                :disabled="isIssuer" />
             </div>
           </form>
-
-          <button
-            v-if="issuables.length > 0"
-            class="btn btn-primary py-2 px-5 _cbtn"
-            @click="pushForApprovement">
-            <img v-if="btnLoading" src="loader.gif" width="20px" /><span
-              v-else
-              >{{ $t('CONFIRM') }}</span
-            >
-          </button>
-          <button
-            v-if="issuables.length > 0"
-            class="btn btn-danger py-2 px-5 _cbtn"
-            @click="pushForDelete">
-            <img v-if="btnLoading" src="loader.gif" width="20px" /><span
-              v-else
-              >{{ $t('REJECT') }}</span
-            >
-          </button>
-        </div>
-      </div>
+        </template>
+        <template #footer>
+          <BaseButton variant="clear" @click="pushForDelete">
+            Reject
+          </BaseButton>
+          <BaseButton variant="primary" @click="pushForApprovement">
+            Confirm
+          </BaseButton>
+        </template>
+      </Modal>
     </section>
   </div>
 </template>
 
 <script>
-// import VerifiableID from 'waltid-web-wallet/components/credentials/VerifiableID.vue'
-// import CredentialEditor from '../components/CredentialEditor.vue'
 import BaseButton from '../components/common/BaseButton.vue'
+import BaseInput from '../components/common/BaseInput.vue'
+import Modal from '../components/Modal.vue'
 
 export default {
+  name: 'IssuerPage',
   layout: 'dashboard',
-  // auth: false,
 
-  components: { BaseButton },
+  auth: false,
+
+  components: { BaseButton, BaseInput, Modal },
 
   data() {
     return {
+      isIssuer: true,
+      isModalVisible: false,
+      formData: {
+        firstName: '',
+        familyName: '',
+        nameAndFamilyNameAtBirth: '',
+        dateOfBirth: '',
+        placeOfBirth: '',
+        gender: '',
+        currentAddress: [''],
+        personalIdentifier: '',
+      },
+
       checkedIssuances: [],
       checkedSessionID: [],
       enableCredentialEditor: false,
@@ -156,10 +162,6 @@ export default {
   },
 
   computed: {
-    availableLocales() {
-      console.log('locales', this.$i18n.locales)
-      return this.$i18n.locales.filter((i) => i.code !== this.$i18n.locale)
-    },
     sessionId() {
       console.log('what is in the query ', this.$route.query)
       console.log('SESSION ID', this.$route.query)
@@ -178,22 +180,19 @@ export default {
     return { wallets, issuables }
   },
   methods: {
-    reset() {
-      this.enableCredentialEditor = false
-      console.log(this.issuables[0])
-    },
-    logout() {
-      this.$auth.logout()
-    },
-    enableInput() {
-      this.enableCredentialEditor = true
-      this.btnDisabled = false
-    },
-    disableInput() {
-      this.enableCredentialEditor = false
-      this.btnDisabled = true
+    showModal(id) {
+      console.log(id)
+      this.checkedIssuances = []
+      this.checkedIssuances.push(id)
+
+      this.formData = JSON.parse(
+        this.issuables.find((i) => i.issuanceID === id)?.vc || '{}',
+      )?.credentials?.[0]?.credentialData?.credentialSubject
+
+      this.isModalVisible = true
     },
     pushForApprovement() {
+      this.isModalVisible = false
       const requests = this.getCorrespondingIDObject()
 
       for (let i = 0; i < requests.length; i++) {
@@ -216,6 +215,7 @@ export default {
       }, 2000)
     },
     pushForDelete() {
+      this.isModalVisible = false
       const requests = this.getCorrespondingIDObject()
 
       for (let i = 0; i < requests.length; i++) {
@@ -275,102 +275,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-label {
-  font-size: 20px;
-  margin-top: -3px;
-  font-weight: 600;
-}
-.rebbutton {
-  color: red;
-}
-button._view-btn {
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-.left-inner-addon {
-  position: relative;
-}
-.left-inner-addon input {
-  padding-left: 35px !important;
-}
-.left-inner-addon i {
-  position: absolute;
-  padding: 17px 15px;
-  pointer-events: none;
-}
-.right-inner-addon {
-  position: relative;
-}
-.right-inner-addon input {
-  padding-right: 35px !important;
-}
-.right-inner-addon i {
-  position: absolute;
-  right: 0px;
-  padding: 17px 15px;
-  pointer-events: none;
-}
-.left-and-right-inner-addon {
-  position: relative;
-}
-.left-and-right-inner-addon input {
-  padding-right: 35px !important;
-  padding-left: 35px !important;
-}
-.left-and-right-inner-addon i.right {
-  position: absolute;
-  right: 0px;
-  padding: 17px 15px;
-  pointer-events: none;
-}
-.right-inner-addon-b {
-  position: relative;
-}
-.right-inner-addon-b input {
-  padding-right: 35px !important;
-}
-.right-inner-addon-b i {
-  position: absolute;
-  right: 0px;
-  padding: 17px 15px;
-  pointer-events: none;
-}
-._forms input {
-  width: 100%;
-  padding: 1em !important;
-  margin: 0em !important;
-  box-sizing: border-box;
-}
-._edit-btn button {
-  background-color: transparent;
-  border: none;
-}
-._cbtn {
-  width: 165px;
-  height: 45px;
-}
-._cbtn img {
-  margin-top: -3px;
-}
-@media only screen and (max-width: 600px) {
-  label {
-    font-size: 14px;
-    margin-top: -3px;
-    font-weight: 600;
-  }
-  button._view-btn {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-    font-size: 13px;
-    font-weight: 600;
-  }
-}
-</style>

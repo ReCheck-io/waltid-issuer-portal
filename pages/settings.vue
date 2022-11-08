@@ -42,7 +42,7 @@ import BaseInput from '../components/common/BaseInput.vue'
 
 export default {
   layout: 'dashboard',
-  auth: false,
+  // auth: false,
 
   components: {
     BaseInput,
