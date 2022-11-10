@@ -5,7 +5,7 @@
       <div class="mt-36 mb-20 md:px-8 xl:px-28 flex flex-col gap-6">
         <div class="mb-8">
           <h1 class="mb-3 text-[40px] font-medium text-dark leading-[48px]">
-            Welcome Back
+            Welcome to the Issuer portal
           </h1>
           <p class="text-base font-medium text-gray-base leading-[19px]">
             Enter your credentials to access your account.
