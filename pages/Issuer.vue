@@ -171,17 +171,17 @@ export default {
   async asyncData({ $axios, query }) {
     const wallets = await $axios.$get('/issuer-api/wallets/list')
     console.log(`These wallets ${JSON.stringify(wallets)}`)
-    const issuables = await $axios.$get(
+    let issuables = await $axios.$get(
       '/issuer-api/credentials/listIssuablesForApprovement',
       { params: query },
     )
     // console.log(issuables[0].id);
     console.log('these issuables ', issuables)
+    issuables = issuables.filter((i) => i.vc !== 'empty')
     return { wallets, issuables }
   },
   methods: {
     showModal(id) {
-      console.log(id)
       this.checkedIssuances = []
       this.checkedIssuances.push(id)
 

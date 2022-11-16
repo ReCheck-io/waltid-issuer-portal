@@ -65,9 +65,15 @@ export default {
     if (!this.localType) return
 
     let rowData = this.data
-    if (this.data.vc) {
+    console.log(this.data)
+    if (this.data.vc && this.data.vc === 'empty') {
+      return
+    }
+    if (this.data.vc && this.data.vc !== 'empty') {
+      console.log(111)
       rowData = JSON.parse(this.data.vc)?.credentials?.[0]
     }
+
     console.log('rowData', rowData)
     const { credentialSubject } = rowData.credentialData
 
