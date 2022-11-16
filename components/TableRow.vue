@@ -70,7 +70,6 @@ export default {
       return
     }
     if (this.data.vc && this.data.vc !== 'empty') {
-      console.log(111)
       rowData = JSON.parse(this.data.vc)?.credentials?.[0]
     }
 
